@@ -3,7 +3,8 @@ async function submitCommentHandler(event) {
   const post_id = window.location.toString().split('/')[
     window.location.toString().split('/').length - 1
   ];
-  const comment_text = document.querySelector('#comment-text').value.trim();
+
+  const comment_text = document.querySelector('#comment-body').value.trim();
   if (comment_text) {
     const response = await fetch('/api/comments', {
       method: 'POST',
@@ -24,4 +25,4 @@ async function submitCommentHandler(event) {
   }
 }
 
-document.querySelector('#post-comment-btn').addEventListener('click', submitCommentHandler);
+document.querySelector('#comment-form').addEventListener('click', submitCommentHandler);

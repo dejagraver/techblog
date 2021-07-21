@@ -1,7 +1,7 @@
 // Import the models
-const User = require('./users');
-const Post = require('./posts');
-const Comment = require('./comments');
+const User = require('./user');
+const Post = require('./post');
+const Comment = require('./comment');
 
 //set up relationships
 //many posts belong to a user 
