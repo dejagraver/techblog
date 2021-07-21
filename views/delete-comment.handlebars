@@ -1,0 +1,29 @@
+{{> post post }}
+{{#if loggedIn}}
+
+<div class="container">
+        <p id="post-body" class="post-text post-text-padding">{{post.body}}</p>
+</div>
+ </div>
+    {{#if currentUser}}
+    <button id="delete-btn">Delete</button>
+    {{/if}}
+</div>
+
+<form class="comment-form">
+  <div>
+    <textarea id="comment-body" name="comment-body"></textarea>
+  </div>
+  <div>
+    <button type="submit">Leave Comment</button>
+  </div>
+
+</form>
+{{/if}}
+
+{{> comments post.comments }}
+
+{{#if loggedIn}}
+<script src="/javascript/comment-post.js"></script>
+<script src="/javascript/delete-post.js"> </script>
+{{/if}}
