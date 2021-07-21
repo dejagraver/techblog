@@ -1,30 +1,53 @@
 const router = require('express').Router();
-const { User, Post, Comment } = require('../../models');
+const { User, Post, Comment, Vote } = require('../../models');
 
 //get all the users
 router.get('/', (req, res) => {
   User.findAll({
     attributes: ['id', 'username', 'email', 'password'], 
   }) 
-    .then((dbUserData) => {res.json(dbUserData);})
-    .catch((err) => {res.status(500).json(err);});
+    .then((dbUserData) => {res.json(dbUserData)})
+    .catch((err) => {res.status(500).json(err)});
 });
 
 //get user by id
 router.get('/:id', (req, res) => {
   User.findOne({
-    where: {
-      id: req.params.id,
-    },
-  }) 
-    .then((dbUserData) => {
-      if (!dbUserData) {
-        res.status(404).json({ message: 'No User found' });
-        return;
-      }
-      res.json(dbUserData);
-    })
-    .catch((err) => {res.status(500).json(err);});
+      attributes: { exclude: ['password'] },
+      where: {
+          id: req.params.id
+      },
+      include: [
+          {
+              model: Post,
+              attributes: ['id', 'post_title', 'post_content', 'created_at']
+          },
+          {
+              model: Comment,
+              attributes: ['id', 'comment_content', 'created_at']
+          },
+          {
+              model: Post,
+              attributes: ['post_title'],
+              through: Vote,
+              as: 'voted_posts'
+          },
+          {
+              model: Comment,
+              attributes: ['comment_content'],
+              through: Vote,
+              as: 'voted_comments'
+          }
+      ]
+  })
+      .then(dbUserData => {
+          if (!dbUserData) {
+              res.status(404).json({ message: 'No user found with that id' });
+              return;
+          }
+          res.json(dbUserData);
+      })
+      .catch(err => {res.status(500).json(err)})
 });
 
 //add user
@@ -42,7 +65,7 @@ router.post('/', (req, res) => {
         res.json(dbUserData);
       });
     })
-    .catch((err) => {res.status(500).json(err);});
+    .catch((err) => {res.status(500).json(err)});
 });
 
 //log in the user
@@ -71,7 +94,7 @@ router.post('/login', (req, res) => {
         res.json({ user: dbUserData, message: 'Logged in!' });
       });
     })
-    .catch((err) => {res.status(500).json(err);});
+    .catch((err) => {res.status(500).json(err)});
 });
 
 //Log out the user
@@ -86,4 +109,43 @@ router.post('/logout', (req, res) => {
   }
 });
 
+// update user
+router.put('/:id', (req, res) => {
+  User.update(
+      {
+          username: erq.body.username,
+          email: req.body.email,
+          password: req.body.password
+      },
+      {
+          where: {
+              id: req.params.id
+          }
+      })
+      .then(dbUserData => {
+          if (!dbUserData) {
+              res.status(404).json({ message: 'No user found with that id' });
+              return;
+          }
+          res.json(dbUserData);
+      })
+      .catch(err => {res.status(500).json(err)});
+});
+
+router.delete('/:id', (req, res) => {
+  User.destroy(
+      {
+          where: {
+              id: req.params.id
+          }
+      })
+      .then(dbUserData => {
+          if (!dbUserData) {
+              res.status(404).json({ message: 'No user found with that id' });
+              return;
+          }
+          res.json(dbUserData);
+      })
+      .catch(err => {res.status(500).json(err)});
+})
 module.exports = router;

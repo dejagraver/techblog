@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const { User, Post, Comment } = require('../../models');
 
-//get comments: display comments and posts 
 router.get('/', (req, res) => {
   Comment.findAll({
     include: [
@@ -19,7 +18,20 @@ router.get('/', (req, res) => {
     .catch((err) => {res.status(500).json(err);});
 });
 
-//get comments by id: display the comments and posts
+router.post('/', (req, res) => {
+  if (req.session) {
+      Comment.create(
+          {
+              comment_content: req.body.comment_content,
+              user_id: req.session.user_id,
+              post_id: req.body.post_id
+          }
+      )
+          .then(dbCommentdata => res.json(dbCommentdata))
+          .catch(err => {res.status(500).json(err);})
+  }
+});
+
 router.get('/:id', (req, res) => {
   Comment.findOne({
     where: {
@@ -46,7 +58,6 @@ router.get('/:id', (req, res) => {
     .catch((err) => {res.status(500).json(err);});
 });
 
-//add comment
 router.post('/', (req, res) => {
   Comment.create({
     comment_text: req.body.comment_text,
@@ -58,7 +69,6 @@ router.post('/', (req, res) => {
 });
 
 
-//remove comment
 router.delete('/:id', (req, res) => {
   Post.destroy({
     where: {
