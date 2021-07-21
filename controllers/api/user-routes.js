@@ -3,11 +3,9 @@ const { User, Post, Comment, Vote } = require('../../models');
 
 //get all the users
 router.get('/', (req, res) => {
-  User.findAll({
-    attributes: ['id', 'username', 'email', 'password'], 
-  }) 
-    .then((dbUserData) => {res.json(dbUserData)})
-    .catch((err) => {res.status(500).json(err)});
+  User.findAll()
+      .then(dbUserData => res.json(dbUserData))
+      .catch(err => {res.status(500).json(err);})
 });
 
 //get user by id
