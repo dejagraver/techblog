@@ -56,6 +56,9 @@ THEN I am signed out of the site
 WHEN I am idle on the page for more than a set time
 THEN I am automatically signed out of the site 
 
+
+Ran into a few issues with the code when trying to authenticate user sign up. Stay tuned for future functionality as indicated above. 
+
     <br />
 
 
